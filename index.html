@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Detalk Dash</title>
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/mdui@1.0.2/dist/css/mdui.min.css" />
+  </head>
+  <body class="mdui-theme-primary-blue mdui-theme-layout-auto mdui-appbar-with-toolbar mdui-theme-accent-red">
+    <div class="mdui-appbar mdui-appbar-fixed">
+      <div class="mdui-toolbar mdui-color-theme">
+      <a href="javascript:;" class="mdui-btn mdui-btn-icon" mdui-drawer="{target: '#left-drawer'}">
+          <i class="mdui-icon material-icons">menu</i>
+      </a>
+      <a href="javascript:;" class="mdui-typo-headline">Detalk</a>
+      <div class="mdui-toolbar-spacer"></div>
+      <a href="javascript:location.reload();" class="mdui-btn mdui-btn-icon">
+          <i class="mdui-icon material-icons">refresh</i>
+      </a>
+      <a href="javascript:;" class="mdui-btn mdui-btn-icon">
+          <i class="mdui-icon material-icons">more_vert</i>
+      </a>
+      </div>
+  </div>
+  <div class="mdui-drawer mdui-drawer-close" id="left-drawer">
+      ... left drawer content ...
+      <button class="mdui-btn" mdui-drawer-close>close</button>
+  </div>
+    <div id="app"></div>
+    <script src="https://cdn.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
+  </body>
+</html>

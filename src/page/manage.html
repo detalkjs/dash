@@ -1,0 +1,225 @@
+<h1>管理评论 <span id="pageid"></span></h1>
+
+<div>
+    <div class="mdui-spinner mdui-spinner-colorful text-center" id="spinner"></div>
+    <ul class="mdui-list" mdui-collapse="{accordion: true}" id="list">
+        
+        
+
+    
+    </ul>
+</div>
+<style>
+    #list .noreply {
+        border: 1px solid;
+        padding-top: 10px;
+        padding-bottom: 10px;
+    }
+</style>
+<script>
+    function dayjs(timestamp) {
+        // convert date to YYYY-MM-DD HH:mm:ss
+        let date = new Date(timestamp);
+        let year = date.getFullYear();
+        let month = date.getMonth() + 1;
+        let day = date.getDate();
+        let hour = date.getHours();
+        let minute = date.getMinutes();
+        let second = date.getSeconds();
+
+        let now = new Date();
+
+        if (now.getMinutes() == minute && now.getHours() == hour && now.getDate() == day && now.getMonth()+1 == month && now.getFullYear() == year) {
+            return "刚刚";
+        } else if (now.getHours() == hour  && now.getDate() == day && now.getMonth()+1 == month && now.getFullYear() == year) {
+            return `${now.getMinutes() - minute } 分钟前`;
+        } else if (now.getDate() == day && now.getMonth()+1 == month && now.getFullYear() == year) {
+            return `${now.getHours() - hour} 小时前`;
+        } else if (now.getMonth()+1 == month && now.getDate() - day < 14 && now.getFullYear() == year) {
+            return `${now.getDate() - day} 天前`;
+        } else {
+            if (month < 10) {
+                month = "0" + month;
+            }
+            if (day < 10) {
+                day = "0" + day;
+            }
+            if (hour < 10) {
+                hour = "0" + hour;
+            }
+            if (minute < 10) {
+                minute = "0" + minute;
+            }
+            if (second < 10) {
+                second = "0" + second;
+            }
+            return `${year}-${month}-${day} ${hour}:${minute}:${second}`;
+        }
+    }
+    function getParam(reqParam) {
+        reqParam = reqParam.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+        const paraReg = new RegExp('[\\?&]' + reqParam + '=([^&#]*)');
+        const results = paraReg.exec(window.location);
+        return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+    }
+    if (!getParam("key")) {
+        location.href = "list.html";
+    }
+    if (!localStorage.getItem("LOGIN_TOKEN") || !localStorage.getItem("DETALK_SERVER")) {
+        location.href = "login.html";
+    }
+    document.getElementById("pageid").innerText = "("+getParam("key")+")";
+    (async() => {
+        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?id=" + getParam("key").split("CMT_")[1], {
+            method: "GET",
+        }).then(res => res.json());
+        if (res.value) {
+            if (res.value == []) {
+                mdui.snackbar({
+                    message: "当前页面暂无评论",
+                    position: "right-top"
+                });
+                return false;
+            }
+            load(res.value, true);
+        } else {
+            mdui.snackbar({
+                message: "评论列表获取失败",
+                position: "right-top"
+            });
+        }
+    })();
+    function load(ct, mode) {
+        if (!mode) {
+            for (let i of ct) {
+                if (!i.replies && !i.deleted) {
+                    let hide = "";
+                    if (i.hide) hide = `<a href="javascript:unhide('${i.rpid}');">[已隐藏]</a>`;
+                    document.getElementById("list").innerHTML += `
+                    <li class="mdui-list-item mdui-ripple noreply">
+                        <div class="mdui-list-item-content mdui-typo">${hide} ${i.content}<hr><br>由 <a href="${i.url}" target="_blank">@${i.nickname}</a> 在 ${dayjs(i.timestamp)} 发布 · <a href="javascript:delt('${i.rpid}');">删除</a> · <a href="javascript:hide('${i.rpid}');">隐藏</a></div>
+                    </li>`;
+                } else if (i.replies && !i.deleted) {
+                    let hide = "";
+                    if (i.hide) hide = `<a href="javascript:unhide('${i.rpid}');">[已隐藏]</a>`;
+                    let replyContent = "";
+                    for (let o of i.replies) {
+                        if (!o.deleted) {
+                            let hide = "";
+                            if (o.hide) hide = `<a href="javascript:unhide('${i.rpid}');">[已隐藏]</a>`;
+                            replyContent += `
+                            <li class="mdui-list-item mdui-ripple noreply">
+                                <div class="mdui-list-item-content mdui-typo">${hide} ${o.content}<hr><br>由 <a href="${o.url}" target="_blank">@${o.nickname}</a> 在 ${dayjs(o.timestamp)} 发布 · <a href="javascript:delt('${o.rpid}');">删除</a> · <a href="javascript:hide('${o.rpid}');">隐藏</a></div>
+                            </li>
+                            `;
+                        }
+                    }
+                    let content = `<li class="mdui-collapse-item noreply">
+                        <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+                        <div class="mdui-list-item-content mdui-typo">${hide} ${i.content}<hr><br>由 <a href="${i.url}" target="_blank">@${i.nickname}</a> 在 ${dayjs(i.timestamp)} 发布 · <a href="javascript:delt('${i.rpid}');">删除</a> · <a href="javascript:hide('${i.rpid}');">隐藏</a></div>
+                        <i class="mdui-collapse-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+                        </div>
+                        <ul class="mdui-collapse-item-body mdui-list mdui-list-dense">
+                            ${replyContent}
+                        </ul>
+                        </li>
+                    `;
+
+                    document.getElementById("list").innerHTML += content;
+                }
+            }
+        } else {
+            for (let j = ct.length - 1; j >= 0; j--) {
+                let i = ct[j];
+                if (!i.replies && !i.deleted) {
+                    let hide = "";
+                    if (i.hide) hide = `<a href="javascript:unhide('${i.rpid}');">[已隐藏]</a>`;
+                    document.getElementById("list").innerHTML += `
+                    <li class="mdui-list-item mdui-ripple noreply">
+                        <div class="mdui-list-item-content mdui-typo">${hide} ${i.content}<hr><br>由 <a href="${i.url}" target="_blank">@${i.nickname}</a> 在 ${dayjs(i.timestamp)} 发布 · <a href="javascript:delt('${i.rpid}');">删除</a> · <a href="javascript:hide('${i.rpid}');">隐藏</a></div>
+                    </li>`;
+                } else if (i.replies && !i.deleted) {
+                    let hide = "";
+                    if (i.hide) hide = `<a href="javascript:unhide('${i.rpid}');">[已隐藏]</a>`;
+                    let replyContent = "";
+                    for (let o of i.replies) {
+                        if (!o.deleted) {
+                            let hide = "";
+                            if (o.hide) hide = `<a href="javascript:unhide('${i.rpid}');">[已隐藏]</a>`;
+                            replyContent += `
+                            <li class="mdui-list-item mdui-ripple noreply">
+                                <div class="mdui-list-item-content mdui-typo">${hide} ${o.content}<hr><br>由 <a href="${o.url}" target="_blank">@${o.nickname}</a> 在 ${dayjs(o.timestamp)} 发布 · <a href="javascript:delt('${o.rpid}');">删除</a> · <a href="javascript:hide('${o.rpid}');">隐藏</a></div>
+                            </li>
+                            `;
+                        }
+                    }
+                    let content = `<li class="mdui-collapse-item noreply">
+                        <div class="mdui-collapse-item-header mdui-list-item mdui-ripple">
+                        <div class="mdui-list-item-content mdui-typo">${hide} ${i.content}<hr><br>由 <a href="${i.url}" target="_blank">@${i.nickname}</a> 在 ${dayjs(i.timestamp)} 发布 · <a href="javascript:delt('${i.rpid}');">删除</a> · <a href="javascript:hide('${i.rpid}');">隐藏</a></div>
+                        <i class="mdui-collapse-item-arrow mdui-icon material-icons">keyboard_arrow_down</i>
+                        </div>
+                        <ul class="mdui-collapse-item-body mdui-list mdui-list-dense">
+                            ${replyContent}
+                        </ul>
+                        </li>
+                    `;
+
+                    document.getElementById("list").innerHTML += content;
+                }
+            }
+        }
+        document.getElementById("spinner").remove();
+    }
+
+    async function delt(rpid) {
+        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?auth="+localStorage.getItem("LOGIN_TOKEN")+"&rpid="+rpid+"&id="+getParam("key").split("CMT_")[1], {
+            method: "DELETE",
+        }).then(res => res.json());
+        if (res.success) {
+            mdui.snackbar({
+                message: "删除成功",
+                position: "right-top"
+            });
+            setTimeout(()=>{location.relod()}, 1000);
+        } else {
+            mdui.snackbar({
+                message: "删除失败",
+                position: "right-top"
+            });
+        }
+    }
+    async function hide(rpid) {
+        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?auth="+localStorage.getItem("LOGIN_TOKEN")+"&rpid="+rpid+"&hide=true"+"&id="+getParam("key").split("CMT_")[1], {
+            method: "DELETE",
+        }).then(res => res.json());
+        if (res.success) {
+            mdui.snackbar({
+                message: "隐藏成功",
+                position: "right-top"
+            });
+            setTimeout(()=>{location.relod()}, 1000);
+        } else {
+            mdui.snackbar({
+                message: "隐藏失败",
+                position: "right-top"
+            });
+        }
+    }
+    async function unhide(rpid) {
+        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?auth="+localStorage.getItem("LOGIN_TOKEN")+"&rpid="+rpid+"&unhide=true"+"&id="+getParam("key").split("CMT_")[1], {
+            method: "DELETE",
+        }).then(res => res.json());
+        if (res.success) {
+            mdui.snackbar({
+                message: "取消隐藏成功",
+                position: "right-top"
+            });
+            setTimeout(()=>{location.relod()}, 1000);
+        } else {
+            mdui.snackbar({
+                message: "取消隐藏失败",
+                position: "right-top"
+            });
+        }
+    }
+</script>

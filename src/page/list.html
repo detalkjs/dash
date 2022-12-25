@@ -1,0 +1,30 @@
+<h1>评论列表</h1>
+
+<div>
+    <div class="mdui-spinner mdui-spinner-colorful text-center" id="spinner"></div>
+    <div class="mdui-list" id="list">
+
+    </div>
+</div>
+
+<script>
+    if (!localStorage.getItem("LOGIN_TOKEN") || !localStorage.getItem("DETALK_SERVER")) {
+        location.href = "login.html";
+    }
+    (async() => {
+        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/all?token="+localStorage.getItem("LOGIN_TOKEN"), {
+            method: "GET",
+        }).then(res => res.json());
+        if (res.success) {
+            for (let i of res.data) {
+                document.getElementById("list").innerHTML += `<a href="manage.html?key=${i}" class="mdui-list-item mdui-ripple">${i}</a>`;
+            }
+            document.getElementById("spinner").remove();
+        } else {
+            mdui.snackbar({
+                message: "评论列表获取失败",
+                position: "right-top"
+            });
+        }
+    })();
+</script>

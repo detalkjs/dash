@@ -1,0 +1,26 @@
+{
+  "name": "dash",
+  "private": true,
+  "version": "0.0.0",
+  "scripts": {
+    "build": "node main.js",
+    "dev": "node dev.js"
+  },
+  "dependencies": {
+    "cheerio": "^1.0.0-rc.12"
+  },
+  "main": "main.js",
+  "devDependencies": {},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/detalkjs/dash.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/detalkjs/dash/issues"
+  },
+  "homepage": "https://github.com/detalkjs/dash#readme",
+  "description": ""
+}
