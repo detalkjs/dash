@@ -14,7 +14,7 @@
       <a href="javascript:;" class="mdui-btn mdui-btn-icon" mdui-drawer="{target: '#left-drawer'}">
           <i class="mdui-icon material-icons">menu</i>
       </a>
-      <a href="javascript:;" class="mdui-typo-headline">Detalk</a>
+      <a href="/" class="mdui-typo-headline">Detalk</a>
       <div class="mdui-toolbar-spacer"></div>
       <a href="javascript:location.reload();" class="mdui-btn mdui-btn-icon">
           <i class="mdui-icon material-icons">refresh</i>
@@ -25,8 +25,9 @@
       </div>
   </div>
   <div class="mdui-drawer mdui-drawer-close" id="left-drawer">
-      ... left drawer content ...
-      <button class="mdui-btn" mdui-drawer-close>close</button>
+    <div class="mdui-list">
+      <a href="list.html" class="mdui-list-item mdui-ripple">页面列表</a>
+    </div>
   </div>
     <div id="app"></div>
     <script src="https://cdn.jsdelivr.net/npm/mdui@1.0.2/dist/js/mdui.min.js"></script>
