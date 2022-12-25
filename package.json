@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "scripts": {
-    "build": "node main.js",
+    "build": "mkdir dist && node main.js",
     "dev": "node dev.js"
   },
   "dependencies": {
