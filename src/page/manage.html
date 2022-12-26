@@ -70,7 +70,7 @@
     }
     document.getElementById("pageid").innerText = "("+getParam("key")+")";
     (async() => {
-        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?id=" + getParam("key").split("CMT_")[1], {
+        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?id=" + getParam("key").split("CMT_")[1]+"&all=true", {
             method: "GET",
         }).then(res => res.json());
         if (res.value) {
