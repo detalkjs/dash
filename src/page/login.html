@@ -78,8 +78,10 @@ async function login() {
         method: "GET",
     }).then(res => res.json());
     if (resp.success) {
-        localStorage.setItem("LOGIN_TOKEN", resp.token);
-        localStorage.setItem("DETALK_SERVER", url);
+        try {
+            localStorage.setItem("LOGIN_TOKEN", resp.token);
+            localStorage.setItem("DETALK_SERVER", url);
+        } catch(e) {}
         mdui.snackbar({
             message: "登录成功",
             position: "right-top"
