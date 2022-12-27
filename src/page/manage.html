@@ -71,7 +71,7 @@
     }
     document.getElementById("pageid").innerText = "("+getParam("key")+")";
     (async() => {
-        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?id=" + getParam("key").split("CMT_")[1]+"&all=true", {
+        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?id=" + decodeURIComponent(getParam("key").split("CMT_")[1])+"&all=true", {
             method: "GET",
         }).then(res => res.json());
         if (res.value) {
@@ -173,7 +173,7 @@
     }
 
     async function delt(rpid) {
-        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?auth="+localStorage.getItem("LOGIN_TOKEN")+"&rpid="+rpid+"&id="+getParam("key").split("CMT_")[1], {
+        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?auth="+localStorage.getItem("LOGIN_TOKEN")+"&rpid="+rpid+"&id="+decodeURIComponent(getParam("key").split("CMT_")[1]), {
             method: "DELETE",
         }).then(res => res.json());
         if (res.success) {
@@ -190,7 +190,7 @@
         }
     }
     async function hide(rpid) {
-        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?auth="+localStorage.getItem("LOGIN_TOKEN")+"&rpid="+rpid+"&hide=true"+"&id="+getParam("key").split("CMT_")[1], {
+        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?auth="+localStorage.getItem("LOGIN_TOKEN")+"&rpid="+rpid+"&hide=true"+"&id="+decodeURIComponent(getParam("key").split("CMT_")[1]), {
             method: "DELETE",
         }).then(res => res.json());
         if (res.success) {
@@ -207,7 +207,7 @@
         }
     }
     async function unhide(rpid) {
-        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?auth="+localStorage.getItem("LOGIN_TOKEN")+"&rpid="+rpid+"&unhide=true"+"&id="+getParam("key").split("CMT_")[1], {
+        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment?auth="+localStorage.getItem("LOGIN_TOKEN")+"&rpid="+rpid+"&unhide=true"+"&id="+decodeURIComponent(getParam("key").split("CMT_")[1]), {
             method: "DELETE",
         }).then(res => res.json());
         if (res.success) {
@@ -235,6 +235,34 @@
         document.getElementById("replyBtn").disabled = false;
         document.getElementById("replyBtn").onclick = function() {
             sendReply(rpid);
+        }
+    }
+    async function rendReply(rpid) {
+        mdui.snackbar({
+            message: `发送评论...`,
+            position: "right-top"
+        });
+        let resp = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/comment", {
+            method: "PUT",
+            body: JSON.stringify({
+                content: document.getElementById("replyContent").value,
+                replyTo: rpid,
+                id: decodeURIComponent(getParam("key").split("CMT_")[1]),
+                auth: localStorage.getItem("LOGIN_TOKEN"),
+            })
+        }).then(res => res.json());
+
+        if (resp.success) {
+            mdui.snackbar({
+                message: "评论成功",
+                position: "right-top"
+            });
+            setTimeout(()=>{location.relod()}, 1000);
+        } else {
+            mdui.snackbar({
+                message: "评论失败",
+                position: "right-top"
+            });
         }
     }
 </script>
