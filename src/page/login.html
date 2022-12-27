@@ -34,7 +34,7 @@ document.body.onkeydown = function (e) {
 }
 
 if (localStorage.getItem("LOGIN_TOKEN") && localStorage.getItem("DETALK_SERVER")) {
-    document.getElementById("login-header").innerText = "已有登录信息 尝试登录";
+    document.getElementById("login-header").innerText = "已有登录信息, 尝试登录";
     fetch(`${localStorage.getItem("DETALK_SERVER")}/_api/token?token=${localStorage.getItem("LOGIN_TOKEN")}`, {
         method: "GET",
     }).then(res => res.json()).then(resp => {
@@ -51,6 +51,8 @@ if (localStorage.getItem("LOGIN_TOKEN") && localStorage.getItem("DETALK_SERVER")
             } else {
                 location.href = "index.html";
             }
+        } else {
+            document.getElementById("login-header").innerText = "登录失败, 请手动登录";
         }
     });
 }
