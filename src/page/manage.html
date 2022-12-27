@@ -237,7 +237,7 @@
             sendReply(rpid);
         }
     }
-    async function rendReply(rpid) {
+    async function sendReply(rpid) {
         mdui.snackbar({
             message: `发送评论...`,
             position: "right-top"
@@ -257,7 +257,7 @@
                 message: "评论成功",
                 position: "right-top"
             });
-            setTimeout(()=>{location.relod()}, 1000);
+            setTimeout(()=>{location.reload()}, 1000);
         } else {
             mdui.snackbar({
                 message: "评论失败",
