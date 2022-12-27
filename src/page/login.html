@@ -33,6 +33,27 @@ document.body.onkeydown = function (e) {
     }
 }
 
+if (localStorage.getItem("LOGIN_TOKEN") && localStorage.getItem("DETALK_SERVER")) {
+    fetch(`${localStorage.getItem("DETALK_SERVER")}/_api/token?token=${localStorage.getItem("LOGIN_TOKEN")}`, {
+        method: "GET",
+    }).then(res => res.json()).then(resp => {
+        if (resp.success) {
+            mdui.snackbar({
+                message: "登录成功",
+                position: "right-top"
+            });
+            if (getParam("framelogin")) {
+                window.parent.postMessage(JSON.stringify({
+                    data: "detalk",
+                    token: resp.token,
+                }), '*');
+            } else {
+                location.href = "index.html";
+            }
+        }
+    });
+}
+
 async function login() {
     let username = document.getElementById("input_username").value;
     let password = document.getElementById("input_password").value;
