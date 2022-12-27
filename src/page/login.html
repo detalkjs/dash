@@ -1,4 +1,4 @@
-<h2>Login</h2>
+<h2 id="login-header">Login</h2>
 <div class="mdui-textfield mdui-textfield-floating-label">
     <label class="mdui-textfield-label">用户名</label>
     <input class="mdui-textfield-input" type="string" id="input_username"/>
@@ -34,6 +34,7 @@ document.body.onkeydown = function (e) {
 }
 
 if (localStorage.getItem("LOGIN_TOKEN") && localStorage.getItem("DETALK_SERVER")) {
+    document.getElementById("login-header").innerText = "已有登录信息 尝试登录";
     fetch(`${localStorage.getItem("DETALK_SERVER")}/_api/token?token=${localStorage.getItem("LOGIN_TOKEN")}`, {
         method: "GET",
     }).then(res => res.json()).then(resp => {
