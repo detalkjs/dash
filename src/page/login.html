@@ -60,7 +60,14 @@ async function login() {
             message: "登录成功",
             position: "right-top"
         });
-        location.href = "index.html";
+        if (getParam("framelogin")) {
+            window.parent.postMessage(JSON.stringify({
+                data: "detalk",
+                token: resp.token,
+            }), '*');
+        } else {
+            location.href = "index.html";
+        }
     } else {
         mdui.snackbar({
             message: "登录失败",
