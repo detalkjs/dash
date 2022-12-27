@@ -47,6 +47,7 @@ if (localStorage.getItem("LOGIN_TOKEN") && localStorage.getItem("DETALK_SERVER")
                 window.parent.postMessage(JSON.stringify({
                     data: "detalk",
                     token: localStorage.getItem("LOGIN_TOKEN"),
+                    admin: true,
                 }), '*');
             } else {
                 location.href = "index.html";
