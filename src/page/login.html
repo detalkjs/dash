@@ -44,11 +44,20 @@ if (localStorage.getItem("LOGIN_TOKEN") && localStorage.getItem("DETALK_SERVER")
                 position: "right-top"
             });
             if (getParam("framelogin")) {
-                window.parent.postMessage(JSON.stringify({
+                // window.parent.postMessage(JSON.stringify({
+                //     data: "detalk",
+                //     token: localStorage.getItem("LOGIN_TOKEN"),
+                //     admin: true,
+                // }), '*');
+                window.opener.postMessage(JSON.stringify({
                     data: "detalk",
                     token: localStorage.getItem("LOGIN_TOKEN"),
                     admin: true,
                 }), '*');
+                document.getElementById("login-header").innerText = "登录成功, 正在关闭窗口...";
+                setTimeout(() => {
+                    window.close();
+                }, 1000);
             } else {
                 location.href = "index.html";
             }
@@ -88,10 +97,19 @@ async function login() {
             position: "right-top"
         });
         if (getParam("framelogin")) {
-            window.parent.postMessage(JSON.stringify({
+            // window.parent.postMessage(JSON.stringify({
+            //     data: "detalk",
+            //     token: resp.token,
+            // }), '*');
+            window.opener.postMessage(JSON.stringify({
                 data: "detalk",
-                token: resp.token,
+                token: localStorage.getItem("LOGIN_TOKEN"),
+                admin: true,
             }), '*');
+            document.getElementById("login-header").innerText = "登录成功, 正在关闭窗口...";
+            setTimeout(() => {
+                window.close();
+            }, 1000);
         } else {
             location.href = "index.html";
         }
