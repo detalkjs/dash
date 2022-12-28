@@ -12,8 +12,8 @@
     <input class="mdui-textfield-input" type="url" id="input_url"/>
 </div>
 
-<button class="mdui-btn mdui-color-theme-accent mdui-ripple" style="margin-top: 30px;" onclick="login();">登录</button>
-<button id="ghlogin" class="mdui-btn mdui-color-theme-accent mdui-ripple" style="margin-left: 20px;display: none;" onclick="loginByGiHub();">GitHub 登录</button>
+<div style="display: inline;"><button class="mdui-btn mdui-color-theme-accent mdui-ripple" style="margin-top: 30px;" onclick="login();">登录</button>
+    <button id="ghlogin" class="mdui-btn mdui-color-theme-accent mdui-ripple" style="margin-left: 20px;display: none;" onclick="loginByGiHub();">GitHub 登录</button></div>
 <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/build/md5.min.js"></script>
 <script>
 function getParam(reqParam) {
@@ -40,37 +40,40 @@ document.body.onkeydown = function (e) {
 }
 
 if (localStorage.getItem("LOGIN_TOKEN") && localStorage.getItem("DETALK_SERVER")) {
-    document.getElementById("login-header").innerText = "已有登录信息, 尝试登录";
-    fetch(`${localStorage.getItem("DETALK_SERVER")}/_api/token?token=${localStorage.getItem("LOGIN_TOKEN")}`, {
-        method: "GET",
-    }).then(res => res.json()).then(resp => {
-        if (resp.success) {
-            mdui.snackbar({
-                message: "登录成功",
-                position: "right-top"
-            });
-            if (getParam("framelogin")) {
-                // window.parent.postMessage(JSON.stringify({
-                //     data: "detalk",
-                //     token: localStorage.getItem("LOGIN_TOKEN"),
-                //     admin: true,
-                // }), '*');
-                window.opener.postMessage(JSON.stringify({
-                    data: "detalk",
-                    token: localStorage.getItem("LOGIN_TOKEN"),
-                    admin: true,
-                }), '*');
-                document.getElementById("login-header").innerText = "登录成功, 正在关闭窗口...";
-                setTimeout(() => {
-                    window.close();
-                }, 1000);
+    mdui.confirm('已有登录信息，是否登录？', function(){
+        document.getElementById("login-header").innerText = "已有登录信息, 尝试登录";
+        fetch(`${localStorage.getItem("DETALK_SERVER")}/_api/token?token=${localStorage.getItem("LOGIN_TOKEN")}`, {
+            method: "GET",
+        }).then(res => res.json()).then(resp => {
+            if (resp.success) {
+                mdui.snackbar({
+                    message: "登录成功",
+                    position: "right-top"
+                });
+                if (getParam("framelogin")) {
+                    // window.parent.postMessage(JSON.stringify({
+                    //     data: "detalk",
+                    //     token: localStorage.getItem("LOGIN_TOKEN"),
+                    //     admin: true,
+                    // }), '*');
+                    window.opener.postMessage(JSON.stringify({
+                        data: "detalk",
+                        token: localStorage.getItem("LOGIN_TOKEN"),
+                        admin: true,
+                    }), '*');
+                    document.getElementById("login-header").innerText = "登录成功, 正在关闭窗口...";
+                    setTimeout(() => {
+                        window.close();
+                    }, 1000);
+                } else {
+                    location.href = "index.html";
+                }
             } else {
-                location.href = "index.html";
+                document.getElementById("login-header").innerText = "登录失败, 请手动登录";
             }
-        } else {
-            document.getElementById("login-header").innerText = "登录失败, 请手动登录";
-        }
+        });
     });
+    
 }
 
 async function login() {
