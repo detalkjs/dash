@@ -12,7 +12,7 @@
     <input class="mdui-textfield-input" type="url" id="input_url"/>
 </div>
 
-<div style="display: inline;"><button class="mdui-btn mdui-color-theme-accent mdui-ripple" style="margin-top: 30px;" onclick="login();">登录</button>
+<div style="display: inline; margin-top: 30px;"><button class="mdui-btn mdui-color-theme-accent mdui-ripple" style="display: inline;" onclick="login();">登录</button>
     <button id="ghlogin" class="mdui-btn mdui-color-theme-accent mdui-ripple" style="margin-left: 20px;display: none;" onclick="loginByGiHub();">GitHub 登录</button></div>
 <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/build/md5.min.js"></script>
 <script>
@@ -29,7 +29,7 @@ if (getParam("url")) {
 }
 
 if (getParam("github")) {
-    document.getElementById("ghlogin").style.display = "block";
+    document.getElementById("ghlogin").style.display = "inline";
 }
 
 
