@@ -1,0 +1,23 @@
+<h2 id="login-header">三方登录</h2>
+
+<script>
+function getParam(reqParam) {
+    reqParam = reqParam.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    const paraReg = new RegExp('[\\?&]' + reqParam + '=([^&#]*)');
+    const results = paraReg.exec(window.location);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
+
+if (getParam("type") == "github") {
+    document.getElementById("login-header").innerText = "使用 GitHub 登录";
+    window.opener.postMessage(JSON.stringify({
+        data: "detalk",
+        token: "gh_"+getParam("code"),
+        admin: false,
+    }), '*');
+    document.getElementById("login-header").innerText = "登录成功, 正在关闭窗口...";
+    setTimeout(() => {
+        window.close();
+    }, 1000);
+}
+</script>

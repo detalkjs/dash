@@ -13,6 +13,7 @@
 </div>
 
 <button class="mdui-btn mdui-color-theme-accent mdui-ripple" style="margin-top: 30px;" onclick="login();">登录</button>
+<button id="ghlogin" class="mdui-btn mdui-color-theme-accent mdui-ripple" style="margin-left: 20px;display: none;" onclick="loginByGiHub();">GitHub 登录</button>
 <script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/build/md5.min.js"></script>
 <script>
 function getParam(reqParam) {
@@ -26,6 +27,11 @@ if (getParam("url")) {
     document.getElementById("div_url").style.display = "none";
     localStorage.setItem("DETALK_SERVER", new URL(getParam("url")).origin);
 }
+
+if (getParam("github")) {
+    document.getElementById("ghlogin").style.display = "block";
+}
+
 
 document.body.onkeydown = function (e) {
     if (e.keyCode == 13) {
@@ -119,5 +125,17 @@ async function login() {
             position: "right-top"
         });
     }
+}
+
+function loginByGiHub() {
+    let cid = getParam("github");
+    if (!cid) {
+        mdui.snackbar({
+            message: "页面配置错误",
+            position: "right-top"
+        });
+        return false;
+    }
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${cid}&redirect_uri=${encodeURIComponent(window.location.origin + "/callback.html?type=github")}&scope=user:email`;
 }
 </script>
