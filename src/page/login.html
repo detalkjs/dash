@@ -139,6 +139,6 @@ function loginByGiHub() {
         });
         return false;
     }
-    window.location.href = `https://github.com/login/oauth/authorize?client_id=${cid}&redirect_uri=${encodeURIComponent(window.location.origin + "/callback.html?type=github")}&scope=user`;
+    window.location.href = `https://github.com/login/oauth/authorize?client_id=${cid}&redirect_uri=${encodeURIComponent(window.location.origin + "/callback.html?type=github")}&scope=read:user`;
 }
 </script>
