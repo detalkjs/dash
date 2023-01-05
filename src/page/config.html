@@ -3,26 +3,124 @@
 
 <h2>站点</h2>
 
-<div class="mdui-textfield mdui-textfield-floating-label">
+<div class="mdui-textfield ">
     <label class="mdui-textfield-label">站点名称</label>
-    <input class="mdui-textfield-input" type="string" id="input_sitename"/>
+    <input class="mdui-textfield-input" type="string" id="input_sitename" disabled/>
 </div>
-<div class="mdui-textfield mdui-textfield-floating-label">
+<div class="mdui-textfield ">
     <label class="mdui-textfield-label">站点网址</label>
-    <input class="mdui-textfield-input" type="url" id="input_sitelink"/>
+    <input class="mdui-textfield-input" type="url" id="input_sitelink" disabled/>
 </div>
 
 <h2>账号</h2>
 
-<div class="mdui-textfield mdui-textfield-floating-label">
+<div class="mdui-textfield ">
     <label class="mdui-textfield-label">昵称</label>
-    <input class="mdui-textfield-input" type="string" id="input_nickname"/>
+    <input class="mdui-textfield-input" type="string" id="input_nickname" disabled/>
 </div>
-<div class="mdui-textfield mdui-textfield-floating-label">
+<div class="mdui-textfield ">
     <label class="mdui-textfield-label">邮箱</label>
-    <input class="mdui-textfield-input" type="email" id="input_email"/>
+    <input class="mdui-textfield-input" type="email" id="input_email" disabled/>
 </div>
-<div class="mdui-textfield mdui-textfield-floating-label">
+<div class="mdui-textfield ">
     <label class="mdui-textfield-label">链接</label>
-    <input class="mdui-textfield-input" type="url" id="input_link"/>
+    <input class="mdui-textfield-input" type="url" id="input_link" disabled/>
 </div>
+
+<h2>第三方</h2>
+<div class="mdui-textfield ">
+    <label class="mdui-textfield-label">GitHub Oauth Secret</label>
+    <input class="mdui-textfield-input" type="url" id="github_oauth_secret" disabled/>
+</div>
+
+
+<h2>自定义</h2>
+
+<div class="mdui-textfield">
+    <label class="mdui-textfield-label">评论前执行 (JavaScript)</label>
+    <textarea style="font-family: monospace;" class="mdui-textfield-input" rows="6" id="before_comment" disabled></textarea>
+</div>
+
+
+<button class="mdui-btn mdui-color-theme-accent mdui-ripple" style="margin-top: 20px;" onclick="save();">保存</button>
+
+<script>
+    function setValue(k,v) {
+        try {
+            document.getElementById(k).value = v.value;
+        } catch(e) {
+            console.log(e);
+        }
+    }
+    if (!localStorage.getItem("LOGIN_TOKEN") || !localStorage.getItem("DETALK_SERVER")) {
+        location.href = "login.html";
+    }
+    (async () => {
+        let res = await fetch(localStorage.getItem("DETALK_SERVER") + "/_api/config?token="+localStorage.getItem("LOGIN_TOKEN"), {
+            method: "GET",
+        }).then(res => res.json());
+
+        if (res.success) {
+            setValue('input_sitename', res.data.SITE_NAME);
+            setValue('input_sitelink', res.data.SITE_LINK);
+            setValue('input_nickname', res.data.ADMIN_NICKNAME);
+            setValue('input_email', res.data.ADMIN_EMAIL);
+            setValue('input_link', res.data.ADMIN_LINK);
+            setValue('github_oauth_secret', res.data.GITHUB_OAUTH_SECRET);
+            setValue('before_comment', res.data.FUNCTION_BEFORE_COMMENT);
+            // document.getElementById("input_sitename").value = res.data.SITE_NAME.value || '';
+            // document.getElementById("input_sitelink").value = res.data.SITE_LINK.value || '';
+            // document.getElementById("input_nickname").value = res.data.ADMIN_NICKNAME.value || '';
+            // document.getElementById("input_email").value = res.data.ADMIN_EMAIL.value || '';
+            // document.getElementById("input_link").value = res.data.ADMIN_LINK.value || '';
+            // document.getElementById("github_oauth_secret").value = res.data.GITHUB_OAUTH_SECRET.value || '';
+            // document.getElementById("before_comment").value = res.data.FUNCTION_BEFORE_COMMENT.value || '';
+
+            document.getElementById("input_sitename").disabled = false;
+            document.getElementById("input_sitelink").disabled = false;
+            document.getElementById("input_nickname").disabled = false;
+            document.getElementById("input_email").disabled = false;    
+            document.getElementById("input_link").disabled = false;
+            document.getElementById("github_oauth_secret").disabled = false;
+            document.getElementById("before_comment").disabled = false;
+
+        } else {
+            mdui.snackbar({
+                message: "配置获取失败",
+                position: "right-top"
+            });
+        }
+
+        mdui.mutation();
+    })();
+    function save() {
+        let data = {
+            SITE_NAME: document.getElementById("input_sitename").value || '',
+            SITE_LINK: document.getElementById("input_sitelink").value || '',
+            ADMIN_NICKNAME: document.getElementById("input_nickname").value || '',
+            ADMIN_EMAIL: document.getElementById("input_email").value || '',
+            ADMIN_LINK: document.getElementById("input_link").value || '',
+            GITHUB_OAUTH_SECRET: document.getElementById("github_oauth_secret").value || '',
+            FUNCTION_BEFORE_COMMENT: document.getElementById("before_comment").value || '',
+        };
+        fetch(localStorage.getItem("DETALK_SERVER") + "/_api/config?token="+localStorage.getItem("LOGIN_TOKEN"), {
+            method: "PUT",
+            body: JSON.stringify(data),
+        }).then(res => res.json()).then(res => {
+            if (res.success) {
+                mdui.snackbar({
+                    message: "配置保存成功",
+                    position: "right-top"
+                });
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                mdui.snackbar({
+                    message: "配置保存失败",
+                    position: "right-top"
+                });
+            }
+        });
+    }
+</script>
