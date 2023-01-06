@@ -1,0 +1,86 @@
+<h2 id="login-header">Login</h2>
+<div class="mdui-textfield mdui-textfield-floating-label">
+    <label class="mdui-textfield-label">用户名</label>
+    <input class="mdui-textfield-input" type="string" id="input_username"/>
+</div>
+<div class="mdui-textfield mdui-textfield-floating-label">
+    <label class="mdui-textfield-label">密码</label>
+    <input class="mdui-textfield-input" type="password" id="input_password"/>
+</div>
+<div class="mdui-textfield mdui-textfield-floating-label" id="div_url">
+    <label class="mdui-textfield-label">后端地址 [http(s)://]</label>
+    <input class="mdui-textfield-input" type="url" id="input_url"/>
+</div>
+
+<div style="display: inline; margin-top: 30px;"><button class="mdui-btn mdui-color-theme-accent mdui-ripple" style="display: inline;" onclick="login();">注册</button></div>
+<script src="https://cdn.jsdelivr.net/npm/js-md5@0.7.3/build/md5.min.js"></script>
+<script>
+function getParam(reqParam) {
+    reqParam = reqParam.replace(/[\[]/, '\\[').replace(/[\]]/, '\\]');
+    const paraReg = new RegExp('[\\?&]' + reqParam + '=([^&#]*)');
+    const results = paraReg.exec(window.location);
+    return results === null ? '' : decodeURIComponent(results[1].replace(/\+/g, ' '));
+}
+
+if (getParam("url")) {
+    document.getElementById("div_url").style.display = "none";
+    localStorage.setItem("DETALK_SERVER", new URL(getParam("url")).origin);
+}
+
+
+document.body.onkeydown = function (e) {
+    if (e.keyCode == 13) {
+        login();
+    }
+}
+
+if (localStorage.getItem("LOGIN_TOKEN") && localStorage.getItem("DETALK_SERVER")) {
+    location.href = '/';
+}
+
+async function _login() {
+    let username = document.getElementById("input_username").value;
+    let password = document.getElementById("input_password").value;
+    let url = document.getElementById("input_url").value || getParam("url");
+    url = new URL(url).origin;
+    if (!url || !username || !password) {
+        mdui.snackbar({
+            message: "请填写用户名、密码和后端地址",
+            position: "right-top"
+        });
+        return;
+    }
+    password = md5(password);
+    mdui.snackbar({
+        message: "正在注册...",
+        position: "right-top"
+    });
+    let rs = await fetch(`${url}/_api/init?`);
+    let resp = await fetch(`${url}/_api/reg?username=${username}&password=${password}`, {
+        method: "GET",
+    }).then(res => res.json());
+    if (resp.success) {
+        try {
+            localStorage.setItem("LOGIN_TOKEN", resp.token);
+            localStorage.setItem("DETALK_SERVER", url);
+        } catch(e) {}
+        mdui.snackbar({
+            message: "注册成功",
+            position: "right-top"
+        });
+        setTimeout(() => {
+            location.href = '/';
+        }, 1500);
+    } else {
+        mdui.snackbar({
+            message: "注册失败",
+            position: "right-top"
+        });
+    }
+}
+
+function login() {
+    mdui.confirm('目前只能注册一个管理员账号，可管理所有配置，是否注册？', login());
+}
+
+</script>

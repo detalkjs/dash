@@ -38,7 +38,12 @@
 
 <div class="mdui-textfield">
     <label class="mdui-textfield-label">评论前执行 (JavaScript)</label>
-    <textarea style="font-family: monospace;" class="mdui-textfield-input" rows="6" id="before_comment" disabled></textarea>
+    <textarea style="font-family: monospace;" class="mdui-textfield-input" rows="10" id="before_comment" disabled></textarea>
+</div>
+
+<div class="mdui-textfield">
+    <label class="mdui-textfield-label">评论后执行 (JavaScript)</label>
+    <textarea style="font-family: monospace;" class="mdui-textfield-input" rows="10" id="after_comment" disabled></textarea>
 </div>
 
 
@@ -48,6 +53,7 @@
     function setValue(k,v) {
         try {
             document.getElementById(k).value = v.value;
+            document.getElementById(k).disabled = false;
         } catch(e) {
             console.log(e);
         }
@@ -68,21 +74,8 @@
             setValue('input_link', res.data.ADMIN_LINK);
             setValue('github_oauth_secret', res.data.GITHUB_OAUTH_SECRET);
             setValue('before_comment', res.data.FUNCTION_BEFORE_COMMENT);
-            // document.getElementById("input_sitename").value = res.data.SITE_NAME.value || '';
-            // document.getElementById("input_sitelink").value = res.data.SITE_LINK.value || '';
-            // document.getElementById("input_nickname").value = res.data.ADMIN_NICKNAME.value || '';
-            // document.getElementById("input_email").value = res.data.ADMIN_EMAIL.value || '';
-            // document.getElementById("input_link").value = res.data.ADMIN_LINK.value || '';
-            // document.getElementById("github_oauth_secret").value = res.data.GITHUB_OAUTH_SECRET.value || '';
-            // document.getElementById("before_comment").value = res.data.FUNCTION_BEFORE_COMMENT.value || '';
+            setValue('after_comment', res.data.FUNCTION_AFTER_COMMENT);
 
-            document.getElementById("input_sitename").disabled = false;
-            document.getElementById("input_sitelink").disabled = false;
-            document.getElementById("input_nickname").disabled = false;
-            document.getElementById("input_email").disabled = false;    
-            document.getElementById("input_link").disabled = false;
-            document.getElementById("github_oauth_secret").disabled = false;
-            document.getElementById("before_comment").disabled = false;
 
         } else {
             mdui.snackbar({
@@ -102,6 +95,7 @@
             ADMIN_LINK: document.getElementById("input_link").value || '',
             GITHUB_OAUTH_SECRET: document.getElementById("github_oauth_secret").value || '',
             FUNCTION_BEFORE_COMMENT: document.getElementById("before_comment").value || '',
+            FUNCTION_AFTER_COMMENT: document.getElementById("after_comment").value || '',
         };
         fetch(localStorage.getItem("DETALK_SERVER") + "/_api/config?token="+localStorage.getItem("LOGIN_TOKEN"), {
             method: "PUT",
