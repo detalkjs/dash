@@ -52,8 +52,8 @@
 <script>
     function setValue(k,v) {
         try {
-            document.getElementById(k).value = v.value;
             document.getElementById(k).disabled = false;
+            document.getElementById(k).value = v.value;
         } catch(e) {
             console.log(e);
         }
