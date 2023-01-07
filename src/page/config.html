@@ -33,6 +33,16 @@
     <input class="mdui-textfield-input" type="url" id="github_oauth_secret" disabled/>
 </div>
 
+<div class="mdui-textfield ">
+    <label class="mdui-textfield-label">reCAPTCHA v3 密钥</label>
+    <input class="mdui-textfield-input" type="url" id="recpatcha_secret" disabled/>
+</div>
+
+<div class="mdui-textfield ">
+    <label class="mdui-textfield-label">reCAPTCHA v3 阈值</label>
+    <input class="mdui-textfield-input" type="url" id="recaptcha_limit" disabled/>
+</div>
+
 
 <h2>自定义</h2>
 
@@ -75,6 +85,8 @@
             setValue('github_oauth_secret', res.data.GITHUB_OAUTH_SECRET);
             setValue('before_comment', res.data.FUNCTION_BEFORE_COMMENT);
             setValue('after_comment', res.data.FUNCTION_AFTER_COMMENT);
+            setValue('recpatcha_secret', res.data.RECAPTCHA_SECRET);
+            setValue('recaptcha_limit', res.data.RECAPTCHA_LIMIT);
 
 
         } else {
@@ -96,6 +108,8 @@
             GITHUB_OAUTH_SECRET: document.getElementById("github_oauth_secret").value || '',
             FUNCTION_BEFORE_COMMENT: document.getElementById("before_comment").value || '',
             FUNCTION_AFTER_COMMENT: document.getElementById("after_comment").value || '',
+            RECAPTCHA_SECRET: document.getElementById("recpatcha_secret").value || '',
+            RECAPTCHA_LIMIT: document.getElementById("recaptcha_limit").value || '',
         };
         fetch(localStorage.getItem("DETALK_SERVER") + "/_api/config?token="+localStorage.getItem("LOGIN_TOKEN"), {
             method: "PUT",
