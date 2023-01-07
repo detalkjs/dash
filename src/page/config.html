@@ -27,6 +27,11 @@
     <input class="mdui-textfield-input" type="url" id="input_link" disabled/>
 </div>
 
+<div class="mdui-textfield ">
+    <label class="mdui-textfield-label">Access Secret</label>
+    <input class="mdui-textfield-input" type="url" id="access_secret" disabled/>
+</div>
+
 <h2>第三方</h2>
 <div class="mdui-textfield ">
     <label class="mdui-textfield-label">GitHub Oauth Secret</label>
@@ -87,6 +92,7 @@
             setValue('after_comment', res.data.FUNCTION_AFTER_COMMENT);
             setValue('recpatcha_secret', res.data.RECAPTCHA_SECRET);
             setValue('recaptcha_limit', res.data.RECAPTCHA_LIMIT);
+            setValue('access_secret', res.data.ACCESS_SECRET);
 
 
         } else {
@@ -110,6 +116,7 @@
             FUNCTION_AFTER_COMMENT: document.getElementById("after_comment").value || '',
             RECAPTCHA_SECRET: document.getElementById("recpatcha_secret").value || '',
             RECAPTCHA_LIMIT: document.getElementById("recaptcha_limit").value || '',
+            ACCESS_SECRET: document.getElementById("access_secret").value || '',
         };
         fetch(localStorage.getItem("DETALK_SERVER") + "/_api/config?token="+localStorage.getItem("LOGIN_TOKEN"), {
             method: "PUT",
